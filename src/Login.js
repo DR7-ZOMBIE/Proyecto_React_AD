@@ -1,16 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Paper } from '@mui/material';
+import axios from 'axios'; // Asegúrate de instalar axios con npm install axios
 
-const Login = ({users}) => {
+const Login = ({ users }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [backgroundImage, setBackgroundImage] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRandomImage = async () => {
+      try {
+        const response = await axios.get(
+          'https://api.unsplash.com/photos/random',
+          {
+            params: { client_id: 'QGC9qAzVDoxGmWrPQB9bc1Bvq9mrIcELn7KN3-3QZ0Q' },
+          }
+        );
+        setBackgroundImage(response.data.urls.regular);
+      } catch (error) {
+        console.error('Error al obtener la imagen de Unsplash:', error);
+      }
+    };
+
+    fetchRandomImage();
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find((user) => user.username === username && user.password === password);
+    const user = users.find(
+      (user) => user.username === username && user.password === password
+    );
     if (user) {
       navigate('/dashboard');
     } else {
@@ -25,7 +47,7 @@ const Login = ({users}) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url('https://source.unsplash.com/random/1600x900')`,
+        backgroundImage: `url('${backgroundImage}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

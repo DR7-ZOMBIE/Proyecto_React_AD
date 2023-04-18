@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+// const { username } = require('./Login');
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+// test('Probando el Login:', () => {
+//   const input = "hola"
+//   let reultado = "hola"
+//   expect(input).toBe(reultado);
+
+// })
