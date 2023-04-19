@@ -35,6 +35,15 @@ const Register = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const alphanumericRegex = /^[a-zA-Z0-9]+[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]*$/;
+    const specialCharacterRegex = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+
+    if (!alphanumericRegex.test(username) || !specialCharacterRegex.test(username)) {
+      alert('El nombre de usuario debe contener al menos un carácter alfanumérico seguido de un carácter especial.');
+      return;
+    }
+
     if (username && password && confirmPassword) {
       if (isUsernameTaken(username)) {
         alert('El nombre de usuario ya está en uso. Por favor, elige otro.');
@@ -98,7 +107,7 @@ const Register = () => {
             />
             <TextField
               label="Contraseña"
-              type="password"
+                            type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               variant="outlined"
