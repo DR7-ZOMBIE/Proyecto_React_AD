@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Paper } from '@mui/material';
-import axios from 'axios'; // Asegúrate de instalar axios con npm install axios
+import axios from 'axios';
+
+import backgroundImage from './Fondo_App_1.jpg';
 
 const Login = ({ users }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [backgroundImage, setBackgroundImage] = useState('');
+  const [backgroundImageURL, setBackgroundImageURL] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,9 +20,10 @@ const Login = ({ users }) => {
             params: { client_id: 'QGC9qAzVDoxGmWrPQB9bc1Bvq9mrIcELn7KN3-3QZ0Q' },
           }
         );
-        setBackgroundImage(response.data.urls.regular);
+        setBackgroundImageURL(response.data.urls.regular);
       } catch (error) {
         console.error('Error al obtener la imagen de Unsplash:', error);
+        setBackgroundImageURL(backgroundImage);
       }
     };
 
@@ -47,7 +50,7 @@ const Login = ({ users }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url('${backgroundImage}')`,
+        backgroundImage: `url('${backgroundImageURL}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

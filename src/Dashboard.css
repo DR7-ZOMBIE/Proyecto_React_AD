@@ -1,0 +1,8 @@
+/* Estilos personalizados para el componente Dashboard */
+body {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .appBar {
+    font-weight: 600;
+  }
