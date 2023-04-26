@@ -1,28 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Box, Typography, TextField, Button, Paper } from '@mui/material';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Box, Typography, TextField, Button, Paper } from "@mui/material";
+import axios from "axios";
 
-import backgroundImage from './Fondo_App_1.jpg';
+import backgroundImage from "./Fondo_App_1.jpg";
 
 const Login = ({ users }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [backgroundImageURL, setBackgroundImageURL] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [backgroundImageURL, setBackgroundImageURL] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRandomImage = async () => {
       try {
         const response = await axios.get(
-          'https://api.unsplash.com/photos/random',
+          "https://api.unsplash.com/photos/random",
           {
-            params: { client_id: 'QGC9qAzVDoxGmWrPQB9bc1Bvq9mrIcELn7KN3-3QZ0Q' },
+            params: {
+              client_id: "QGC9qAzVDoxGmWrPQB9bc1Bvq9mrIcELn7KN3-3QZ0Q",
+            },
           }
         );
         setBackgroundImageURL(response.data.urls.regular);
       } catch (error) {
-        console.error('Error al obtener la imagen de Unsplash:', error);
+        console.error("Error al obtener la imagen de Unsplash:", error);
         setBackgroundImageURL(backgroundImage);
       }
     };
@@ -32,27 +34,27 @@ const Login = ({ users }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = JSON.parse(localStorage.getItem("users")) || [];
     const user = users.find(
       (user) => user.username === username && user.password === password
     );
     if (user) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     } else {
-      alert('Credenciales incorrectas o usuario no registrado.');
+      alert("Credenciales incorrectas o usuario no registrado.");
     }
   };
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         backgroundImage: `url('${backgroundImageURL}')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       <Paper
@@ -67,9 +69,9 @@ const Login = ({ users }) => {
         <form onSubmit={handleSubmit}>
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              '& > *': {
+              display: "flex",
+              flexDirection: "column",
+              "& > *": {
                 marginBottom: 2,
               },
             }}
