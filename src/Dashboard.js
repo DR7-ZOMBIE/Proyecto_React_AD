@@ -122,6 +122,7 @@ const Dashboard = () => {
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
   const [financialNews, setFinancialNews] = useState([]);
   const navigate = useNavigate();
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     const fetchRandomPhoto = async () => {
@@ -166,10 +167,11 @@ const Dashboard = () => {
         return {
           id: stock.id,
           symbol: stock["1. symbol"],
-          name: stock["2. name"], // Cambia esto a 'stock["2. name"]'
+          name: stock["2. name"],
         };
       });
       setStocks(stocksData);
+      setHasSearched(true); // Añade esta línea
     }
   };
 
@@ -232,8 +234,9 @@ const Dashboard = () => {
             </SearchButton>
           </SearchContainer>
           <CarouselContainer>
-            <Carousel autoPlay infiniteLoop interval={5000}>
-              {stocks &&
+            <Carousel autoPlay={!hasSearched} infiniteLoop interval={5000}>
+              {hasSearched ? (
+                stocks &&
                 Array.isArray(stocks) &&
                 stocks.length > 0 &&
                 stocks.map((stock) => (
@@ -256,7 +259,21 @@ const Dashboard = () => {
                       </CardActions>
                     </StockCard>
                   </Grow>
-                ))}
+                ))
+              ) : (
+                <Grow in timeout={500}>
+                  <StockCard>
+                    <CardContent>
+                      <Typography variant="h6">
+                        No se ha realizado una búsqueda
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        Utilice el cuadro de búsqueda para encontrar acciones.
+                      </Typography>
+                    </CardContent>
+                  </StockCard>
+                </Grow>
+              )}
             </Carousel>
           </CarouselContainer>
           <InvestmentTitle variant="h4">Inversiones realizadas</InvestmentTitle>
