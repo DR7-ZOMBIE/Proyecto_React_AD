@@ -88,8 +88,8 @@ const CarouselContainer = styled(Box)(({ theme }) => ({
   width: "100%",
   height: "100%",
   padding: theme.spacing(2),
-  // backgroundColor: "rgba(0, 0, 0, 0.3)", // Agregar esta línea
 }));
+
 const InvestmentTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(3),
 }));
@@ -100,7 +100,6 @@ const StockCard = styled(Card)(({ theme }) => ({
   justifyContent: "space-between",
   height: "100%",
   padding: theme.spacing(2),
-  // backgroundColor: "rgba(0, 0, 0, 0.7)", // Agregar esta línea
 }));
 
 const InvestmentContainer = styled(Grid)(({ theme }) => ({
@@ -123,27 +122,28 @@ const Dashboard = () => {
   const [financialNews, setFinancialNews] = useState([]);
   const navigate = useNavigate();
   const [hasSearched, setHasSearched] = useState(false);
+  const [stockData, setStockData] = useState(null);
 
-  useEffect(() => {
-    const fetchRandomPhoto = async () => {
-      try {
-        const response = await axios.get(
-          "https://api.unsplash.com/photos/random",
-          {
-            params: {
-              client_id: "QGC9qAzVDoxGmWrPQB9bc1Bvq9mrIcELn7KN3-3QZ0Q",
-            },
-          }
-        );
-        setBackgroundImageUrl(response.data.urls.regular);
-      } catch (error) {
-        console.error("Error al obtener la imagen de Unsplash:", error);
-        setBackgroundImageUrl(backgroundImage);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchRandomPhoto = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "https://api.unsplash.com/photos/random",
+  //         {
+  //           params: {
+  //             client_id: "QGC9qAzVDoxGmWrPQB9bc1Bvq9mrIcELn7KN3-3QZ0Q",
+  //           },
+  //         }
+  //       );
+  //       setBackgroundImageUrl(response.data.urls.regular);
+  //     } catch (error) {
+  //       console.error("Error al obtener la imagen de Unsplash:", error);
+  //       setBackgroundImageUrl(backgroundImage);
+  //     }
+  //   };
 
-    fetchRandomPhoto();
-  }, []);
+  //   fetchRandomPhoto();
+  // }, []);
 
   useEffect(() => {
     const fetchFinancialNews = async () => {
@@ -160,18 +160,25 @@ const Dashboard = () => {
   }, []);
 
   const handleSearch = async () => {
-    const results = await alphaVantageAPI.searchStocks(searchQuery);
-    console.log("API Results:", results);
-    if (results) {
-      const stocksData = results.map((stock) => {
-        return {
-          id: stock.id,
-          symbol: stock["1. symbol"],
-          name: stock["2. name"],
-        };
-      });
-      setStocks(stocksData);
-      setHasSearched(true); // Añade esta línea
+    try {
+      const response = await axios.get(
+        `http://179.12.248.188:5000/predict_price?ticker=${searchQuery}&target_date=2023-06-01&start_date=2023-01-01`
+      );
+      const stockData = response.data;
+      if (stockData && stockData.ticker) {
+        setStocks([stockData]);
+        setStockData(stockData);
+        setHasSearched(true);
+      } else {
+        setStocks([]);
+        setStockData(null);
+        setHasSearched(false);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setStocks([]);
+      setStockData(null);
+      setHasSearched(false);
     }
   };
 
@@ -203,7 +210,7 @@ const Dashboard = () => {
       <Box
         sx={{
           minHeight: "100vh",
-          backgroundImage: `url(${financialNews.urlToImage})`,
+          backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -236,30 +243,29 @@ const Dashboard = () => {
           <CarouselContainer>
             <Carousel autoPlay={!hasSearched} infiniteLoop interval={5000}>
               {hasSearched ? (
-                stocks &&
-                Array.isArray(stocks) &&
-                stocks.length > 0 &&
-                stocks.map((stock) => (
-                  <Grow in key={stock.id} timeout={500}>
+                stockData && (
+                  <Grow in timeout={500}>
                     <StockCard>
                       <CardContent>
-                        <Typography variant="h6">{stock.symbol}</Typography>
+                        <Typography variant="h6">{stockData.symbol}</Typography>
                         <Typography variant="subtitle1">
-                          {stock.name}
+                          {stockData.name}
                         </Typography>
                       </CardContent>
                       <CardActions>
                         <Button
                           size="small"
                           color="primary"
-                          onClick={() => handleInvest(stock.symbol, stock.name)}
+                          onClick={() =>
+                            handleInvest(stockData.symbol, stockData.name)
+                          }
                         >
                           Invertir
                         </Button>
                       </CardActions>
                     </StockCard>
                   </Grow>
-                ))
+                )
               ) : (
                 <Grow in timeout={500}>
                   <StockCard>
@@ -276,16 +282,18 @@ const Dashboard = () => {
               )}
             </Carousel>
           </CarouselContainer>
+
           <InvestmentTitle variant="h4">Inversiones realizadas</InvestmentTitle>
           <InvestmentContainer container spacing={3}>
             {Array.isArray(investments) &&
               investments.length > 0 &&
               investments.map((investment) => (
                 <Grid key={investment.id} item xs={12} sm={6} md={4} lg={3}>
-                  <InvestmentChart investments={investment} />
+                  <InvestmentChart investment={investment} /> {/* Pasa el objeto de inversión individual */}
                 </Grid>
               ))}
           </InvestmentContainer>
+
           <CarouselContainer>
             <Carousel autoPlay infiniteLoop interval={5000}>
               {financialNews &&

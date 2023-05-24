@@ -1,4 +1,3 @@
-// InvestmentChart.js
 import React from "react";
 import {
   BarChart,
@@ -11,12 +10,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const InvestmentChart = ({ investments }) => {
-  // <-- Cambie 'investments' a 'investment'
+const InvestmentChart = ({ investment }) => {
   const data = [
     {
-      name: investments.symbol,
-      amount: investments.amount,
+      name: investment.symbol,
+      amount: investment.amount,
     },
   ];
 
